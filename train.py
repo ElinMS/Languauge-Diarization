@@ -16,6 +16,11 @@ Usage
 import sys
 import os
 
+# ── Always add the project root to sys.path ──────────────────────────────────
+# This ensures local packages (data, training, models, etc.) are importable
+# regardless of which directory python is launched from.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 # ── CRITICAL: Windows multiprocessing fix ────────────────────────────────────
 # PyTorch DataLoader spawns worker processes on Windows.
 # Without this guard the module re-imports itself → infinite loop.
@@ -26,8 +31,6 @@ if __name__ == "__main__":
     # "spawn" is the Windows default; setting it explicitly prevents subtle bugs
     multiprocessing.set_start_method("spawn", force=True)
 
-    # make project root importable when called from any working directory
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
     from omegaconf import OmegaConf
     from data.dataset import build_dataloaders
