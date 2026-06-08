@@ -29,8 +29,9 @@
 # Dataset annotation files (can be large in bulk)
 *.rttm
 
-# Large data folders
-data/
+# Large data folders (only subdirs with actual data, not Python source)
+data/processed/
+data/cache/
 checkpoints/
 Dataset/
 __pycache__/
