@@ -70,13 +70,13 @@ training:
   warmup_steps: 500          # was 10000 — must be < total_steps (157 steps/epoch × 50 = 7850)
   weight_decay: 1.0e-6
   grad_clip: 1.0             # was 5.0 — tighter clipping prevents NaN in fp16
-  mixed_precision: true      # fp16
+  mixed_precision: false     # disabled — A5000 has 24GB, fp32 is stable and safe
 
   # Loss weights
   loss:
-    ctc_weight: 0.1          # was 0.3 — CTC loss was ~666 and dominating/destabilising
-    frame_cls_weight: 0.5    # increased to compensate
-    boundary_weight: 0.4     # increased to compensate
+    ctc_weight: 0.0          # disabled — CTC loss was 195+, overflowing fp16 gradients
+    frame_cls_weight: 0.6    # per-frame language classification (primary loss)
+    boundary_weight: 0.4     # binary boundary detection
 
   scheduler:
     name: cosine_with_warmup

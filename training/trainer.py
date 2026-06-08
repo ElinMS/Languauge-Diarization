@@ -237,6 +237,12 @@ class Trainer:
                 loss_dict  = self.criterion(model_out, targets)
                 loss       = loss_dict["loss"]
 
+            # ── NaN guard ────────────────────────────────────────────────
+            if not torch.isfinite(loss):
+                print(f"  [warn] NaN/Inf loss at step {step}, skipping batch.")
+                self.optimizer.zero_grad()
+                continue
+
             # ── backward ─────────────────────────────────────────────────
             self.optimizer.zero_grad()
             self.scaler.scale(loss).backward()
