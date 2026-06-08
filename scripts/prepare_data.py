@@ -78,8 +78,8 @@ def resample_to_np(audio_array, orig_sr: int) -> np.ndarray:
         return t.squeeze(0).numpy()
 
 
-def save_clip(wav: np.ndarray, lang: str, idx: int):
-    out_dir = CACHE_ROOT / lang
+def save_clip(wav: np.ndarray, lang: str, idx: int, split: str = "train"):
+    out_dir = CACHE_ROOT / split / lang
     out_dir.mkdir(parents=True, exist_ok=True)
     fname   = out_dir / f"{lang}_{idx:06d}.wav"
     sf.write(str(fname), wav, TARGET_SR)
@@ -114,7 +114,7 @@ def prepare_fleurs(langs, max_per_lang: int, split: str = "train"):
             # skip very short clips
             if len(wav) < TARGET_SR * 0.5:
                 continue
-            save_clip(wav, lang, i)
+            save_clip(wav, lang, i, args.split)
             count += 1
 
         print(f"    → saved {count} clips for {lang}")
@@ -145,7 +145,7 @@ def prepare_common_voice(langs, max_per_lang: int, split: str = "train"):
             wav   = resample_to_np(np.array(audio["array"]), audio["sampling_rate"])
             if len(wav) < TARGET_SR * 0.5:
                 continue
-            save_clip(wav, lang, i + 100_000)   # offset to avoid name clash with FLEURS
+            save_clip(wav, lang, i + 100_000, args.split)   # offset to avoid name clash with FLEURS
             count += 1
 
         print(f"    → saved {count} clips for {lang}")
@@ -179,7 +179,7 @@ def prepare_voxpopuli(langs, max_per_lang: int, split: str = "train"):
             wav   = resample_to_np(np.array(audio["array"]), audio["sampling_rate"])
             if len(wav) < TARGET_SR * 0.5:
                 continue
-            save_clip(wav, lang, i + 200_000)
+            save_clip(wav, lang, i + 200_000, args.split)
             count += 1
 
         print(f"    → saved {count} clips for {lang}")
@@ -209,7 +209,7 @@ def parse_args():
         help="Dataset split: train / validation / test",
     )
     p.add_argument(
-        "--cache_dir", default="data/cache",
+        "--cache_dir", default="./Dataset",
         help="Root output directory for cached WAV files",
     )
     return p.parse_args()
@@ -242,7 +242,8 @@ def main():
     print(f"\n{'='*60}")
     print("  Cache summary:")
     total = 0
-    for lang_dir in sorted(CACHE_ROOT.iterdir()):
+    split_root = CACHE_ROOT / args.split
+    for lang_dir in sorted(split_root.iterdir()) if split_root.exists() else []:
         if lang_dir.is_dir():
             n = len(list(lang_dir.glob("*.wav")))
             total += n

@@ -37,16 +37,16 @@ model:
 data:
   # Languages to include (ISO-639-1 codes)
   languages:
-    - L1
-    - L2
-    - L3
-    - L4
-    - L5
-    - L6
-    - L7
-    - L8
-    - L9
-    - L10
+    - en   # English
+    - fr   # French
+    - de   # German
+    - es   # Spanish
+    - hi   # Hindi
+    - zh   # Mandarin Chinese
+    - ar   # Arabic
+    - ru   # Russian
+    - pt   # Portuguese
+    - ja   # Japanese
 
   # Synthetic code-switching construction (params retained for sizes)
   synthetic:
@@ -59,7 +59,7 @@ data:
     num_val_samples: 500
 
   # File paths for preprocessed data
-  cache_dir: ./Multilingual Dataset
+  cache_dir: ./Dataset
   processed_dir: ./data/processed
 
 # ── Training ─────────────────────────────────

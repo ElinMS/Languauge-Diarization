@@ -1,4 +1,4 @@
-﻿# Large Dataset & Model Files - excluded to allow fast GitHub push
+# Large Dataset & Model Files - excluded to allow fast GitHub push
 
 # Audio files (can be GBs of training data)
 *.wav
@@ -32,7 +32,7 @@
 # Large data folders
 data/
 checkpoints/
-Multilingual Dataset/
+Dataset/
 __pycache__/
 *.pyc
 *.exe
