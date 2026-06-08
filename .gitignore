@@ -1,0 +1,38 @@
+﻿# Large Dataset & Model Files - excluded to allow fast GitHub push
+
+# Audio files (can be GBs of training data)
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.aac
+*.m4a
+*.opus
+
+# Model checkpoints & weights
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.h5
+*.onnx
+
+# Compressed archives / dataset bundles
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.7z
+*.rar
+
+# Dataset annotation files (can be large in bulk)
+*.rttm
+
+# Large data folders
+data/
+checkpoints/
+Multilingual Dataset/
+__pycache__/
+*.pyc
+*.exe

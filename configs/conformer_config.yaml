@@ -1,0 +1,99 @@
+# ─────────────────────────────────────────────
+#  Conformer Language Boundary Detector — Config
+# ─────────────────────────────────────────────
+
+# ── Audio features ──────────────────────────
+audio:
+  sample_rate: 16000
+  n_mels: 80               # log-mel filterbank bins
+  n_fft: 512
+  hop_length: 160          # 10 ms stride @ 16 kHz
+  win_length: 400          # 25 ms window
+  f_min: 0
+  f_max: 8000
+  normalize: true
+  wavegram_channels: 128   # 1D wavegram out channels
+  wavegram_kernel: 1024
+
+# ── Conformer encoder ────────────────────────
+model:
+  input_dim: 208           # 80 (mel) + 128 (wavegram)
+  encoder_dim: 256         # model width
+  num_heads: 4             # multi-head attention heads
+  num_layers: 12           # Conformer blocks
+  ff_expansion_factor: 4   # feed-forward expansion ratio
+  conv_kernel_size: 31     # depthwise conv kernel (must be odd)
+  dropout: 0.1
+  subsampling_factor: 4    # Conv2D subsampling before encoder
+  subsampling_dim: 256
+
+  # Language classification head
+  num_languages: 10        # number of target languages
+  # Boundary detection head
+  boundary_threshold: 0.5  # sigmoid threshold for switch detection
+  temporal_smoothing_window: 5  # frames for post-processing
+
+# ── Datasets ─────────────────────────────────
+data:
+  # Languages to include (ISO-639-1 codes)
+  languages:
+    - L1
+    - L2
+    - L3
+    - L4
+    - L5
+    - L6
+    - L7
+    - L8
+    - L9
+    - L10
+
+  # Synthetic code-switching construction (params retained for sizes)
+  synthetic:
+    enabled: false
+    min_segment_duration: 1.0   
+    max_segment_duration: 5.0
+    max_switches_per_sample: 4  
+    output_sample_duration: 15  
+    num_train_samples: 5000
+    num_val_samples: 500
+
+  # File paths for preprocessed data
+  cache_dir: ./Multilingual Dataset
+  processed_dir: ./data/processed
+
+# ── Training ─────────────────────────────────
+training:
+  epochs: 50
+  batch_size: 16
+  learning_rate: 1.0e-3
+  warmup_steps: 10000
+  weight_decay: 1.0e-6
+  grad_clip: 5.0
+  mixed_precision: true   # fp16
+
+  # Loss weights
+  loss:
+    ctc_weight: 0.3          # CTC language sequence loss
+    frame_cls_weight: 0.4    # Per-frame language classification
+    boundary_weight: 0.3     # Binary boundary detection
+
+  scheduler:
+    name: cosine_with_warmup
+    min_lr: 1.0e-6
+
+  # Checkpointing
+  checkpoint_dir: ./checkpoints
+  save_every_n_epochs: 5
+  keep_last_n: 3
+
+# ── Evaluation ───────────────────────────────
+eval:
+  boundary_tolerance_ms: 200   # ±200 ms tolerance for boundary F1
+  min_segment_duration: 0.5    # ignore segments shorter than this
+
+# ── Inference ────────────────────────────────
+inference:
+  chunk_size_sec: 30       # streaming chunk size
+  step_size_sec: 5         # sliding window step
+  device: cuda             # or cpu
