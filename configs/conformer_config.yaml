@@ -66,17 +66,17 @@ data:
 training:
   epochs: 50
   batch_size: 16
-  learning_rate: 1.0e-3
-  warmup_steps: 10000
+  learning_rate: 3.0e-4     # was 1e-3 — reduced to prevent NaN/gradient explosion
+  warmup_steps: 500          # was 10000 — must be < total_steps (157 steps/epoch × 50 = 7850)
   weight_decay: 1.0e-6
-  grad_clip: 5.0
-  mixed_precision: true   # fp16
+  grad_clip: 1.0             # was 5.0 — tighter clipping prevents NaN in fp16
+  mixed_precision: true      # fp16
 
   # Loss weights
   loss:
-    ctc_weight: 0.3          # CTC language sequence loss
-    frame_cls_weight: 0.4    # Per-frame language classification
-    boundary_weight: 0.3     # Binary boundary detection
+    ctc_weight: 0.1          # was 0.3 — CTC loss was ~666 and dominating/destabilising
+    frame_cls_weight: 0.5    # increased to compensate
+    boundary_weight: 0.4     # increased to compensate
 
   scheduler:
     name: cosine_with_warmup
