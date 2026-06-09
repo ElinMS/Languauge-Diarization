@@ -62,7 +62,7 @@ class LanguageBoundaryInference:
         ff_expansion_factor: int = 4,
         conv_kernel_size: int = 31,
         dropout: float = 0.0,
-        num_languages: int = 10,
+        num_languages: int = 5,
         input_dim: int = 208,
         wavegram_channels: int = 128,
         wavegram_kernel: int = 1024,
@@ -126,7 +126,7 @@ class LanguageBoundaryInference:
     @torch.no_grad()
     def _process_chunk(self, chunk: np.ndarray) -> Dict:
         """Run model on a single chunk. Returns raw logits & probs."""
-        audio_t = torch.from_numpy(chunk).unsqueeze(0).to(self.device)  # (1, T)
+        audio_t = torch.from_numpy(chunk).unsqueeze(0).float().to(self.device)  # (1, T) float32
         feats   = self.frontend(audio_t)                                  # (1, T_f, F)
         out     = self.model(feats)
 
@@ -168,7 +168,7 @@ class LanguageBoundaryInference:
             # zero-pad if shorter than chunk_size (last chunk)
             if len(chunk) < self.chunk_samp:
                 chunk = np.concatenate(
-                    [chunk, np.zeros(self.chunk_samp - len(chunk))]
+                    [chunk, np.zeros(self.chunk_samp - len(chunk), dtype=np.float32)]
                 )
 
             result = self._process_chunk(chunk)
