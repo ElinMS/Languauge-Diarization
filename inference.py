@@ -62,7 +62,7 @@ def main():
     m_cfg   = cfg.model
     a_cfg   = cfg.audio
 
-    threshold    = args.threshold    or m_cfg.boundary_threshold
+    threshold    = args.threshold    or OmegaConf.select(inf_cfg, 'boundary_threshold', default=m_cfg.boundary_threshold)
     smooth_win   = args.smooth_window or m_cfg.temporal_smoothing_window
     chunk_sec    = args.chunk_sec    or inf_cfg.chunk_size_sec
     step_sec     = args.step_sec     or inf_cfg.step_size_sec

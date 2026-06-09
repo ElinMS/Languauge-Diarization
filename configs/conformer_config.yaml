@@ -94,6 +94,7 @@ eval:
 
 # ── Inference ────────────────────────────────
 inference:
-  chunk_size_sec: 30       # streaming chunk size
+  chunk_size_sec: 15       # must match training window size (model saw 15s clips)
   step_size_sec: 5         # sliding window step
-  device: cuda             # or cpu
+  device: cuda
+  boundary_threshold: 0.35 # lower than 0.5 for better boundary sensitivity

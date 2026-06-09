@@ -14,21 +14,15 @@ import torchaudio
 _NUM_WORKERS_TRAIN = 0 if sys.platform == "win32" else 4
 _NUM_WORKERS_VAL   = 0 if sys.platform == "win32" else 2
 
-# We will use simple integer IDs for L1, L2, etc. based on the rttms
-# The config specifies 10 languages, let's just make it up to 10
-LANGUAGES = ["en", "fr", "de", "es", "hi", "zh", "ar", "ru", "pt", "ja"]
+# Generic L1..L5 labels matching the RTTM files in this dataset
+LANGUAGES = ["L1", "L2", "L3", "L4", "L5"]
 LANG2ID   = {lang: idx for idx, lang in enumerate(LANGUAGES)}
 ID2LANG   = {
-    0: "English",
-    1: "French",
-    2: "German",
-    3: "Spanish",
-    4: "Hindi",
-    5: "Mandarin",
-    6: "Arabic",
-    7: "Russian",
-    8: "Portuguese",
-    9: "Japanese",
+    0: "L1",
+    1: "L2",
+    2: "L3",
+    3: "L4",
+    4: "L5",
 }
 
 # hop length in seconds (must match config)
