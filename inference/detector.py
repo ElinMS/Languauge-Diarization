@@ -190,17 +190,25 @@ class LanguageBoundaryInference:
             bnd_probs = np.convolve(bnd_probs, kernel, mode="same")
 
         # ── detect switch frames ─────────────────────────────────────────
-        above_thr = bnd_probs >= self.boundary_thr  # (T_enc,)
+        # If boundary head never fires (max prob < 0.1), fall back to
+        # detecting switches from consecutive frame label changes instead
+        if bnd_probs.max() < 0.1:
+            lang_arr = np.array(all_lang_ids)
+            switch_frames = list(
+                np.where(np.diff(lang_arr) != 0)[0] + 1
+            )
+        else:
+            above_thr = bnd_probs >= self.boundary_thr
 
-        # non-maximum suppression: keep only the first frame in each contiguous run
-        switch_frames = []
-        in_run = False
-        for i, flag in enumerate(above_thr):
-            if flag and not in_run:
-                switch_frames.append(i)
-                in_run = True
-            elif not flag:
-                in_run = False
+            # non-maximum suppression: keep only the first frame in each run
+            switch_frames = []
+            in_run = False
+            for i, flag in enumerate(above_thr):
+                if flag and not in_run:
+                    switch_frames.append(i)
+                    in_run = True
+                elif not flag:
+                    in_run = False
 
         switch_times_sec = [f * self.enc_hop_sec for f in switch_frames]
 
