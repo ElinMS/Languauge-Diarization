@@ -76,10 +76,16 @@ def parse_rttm(rttm_path: Path) -> List[Tuple[float, float, int]]:
             parts = line.strip().split()
             if len(parts) >= 8 and parts[0] == "LANGUAGE":
                 start_time = float(parts[3])
-                duration = float(parts[4])
+                duration   = float(parts[4])
                 lang_label = parts[7]
-                
-                lang_id = LANG2ID.get(lang_label, 0)
+
+                # Handle generic "L1", "L2", "L3"... format (synthetic datasets)
+                if lang_label.startswith("L") and lang_label[1:].isdigit():
+                    lang_id = int(lang_label[1:]) - 1   # L1→0, L2→1, L3→2 ...
+                else:
+                    # Handle ISO code format: "en", "fr", "de" ...
+                    lang_id = LANG2ID.get(lang_label, 0)
+
                 segments.append((start_time, start_time + duration, lang_id))
     return segments
 

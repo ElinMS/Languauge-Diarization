@@ -28,7 +28,7 @@ model:
   subsampling_dim: 256
 
   # Language classification head
-  num_languages: 10        # number of target languages
+  num_languages: 5        # L1, L2, L3, L4, L5 — matches your RTTM labels
   # Boundary detection head
   boundary_threshold: 0.5  # sigmoid threshold for switch detection
   temporal_smoothing_window: 5  # frames for post-processing
