@@ -64,8 +64,10 @@ def build_frame_labels(
         e_frame = min(int(end   / HOP_SEC), total_frames)
         if s_frame < e_frame:
             frame_labels[s_frame:e_frame] = lang_id
-            if i > 0 and s_frame > 0:
-                boundary_mask[s_frame] = True   # first frame of new language
+            # Only mark as boundary when language actually CHANGES
+            # (not at every segment start — consecutive same-language segments are NOT boundaries)
+            if i > 0 and s_frame > 0 and lang_id != segments[i - 1][2]:
+                boundary_mask[s_frame] = True
 
     return frame_labels, boundary_mask
 
